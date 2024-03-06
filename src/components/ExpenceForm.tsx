@@ -1,4 +1,4 @@
-import { ChangeEvent, FormEvent, useState } from "react";
+import React, { ChangeEvent, FormEvent, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { toastSucess, toastError } from "../helper";
 
@@ -9,11 +9,21 @@ type ExpenceType = {
   date: string;
 };
 
-const ExpenceForm = () => {
+type ExpenseFormProps = {
+  onGeTotalIExponseAmount: (amount: number) => void;
+};
+
+const ExpenceForm = (props: ExpenseFormProps) => {
   const [source, setSource] = useState<string>("");
   const [amount, setAmount] = useState<number>(0);
   const [date, setDate] = useState<string>("");
   const [expences, setExpences] = useState<ExpenceType[]>([]);
+
+  const totalAmount = expences.reduce(
+    (total, currentValue) => total + currentValue.amount,
+    0
+  );
+  props.onGeTotalIExponseAmount(totalAmount);
 
   const handleSourceChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
@@ -95,19 +105,19 @@ const ExpenceForm = () => {
         </div>
       </form>
 
-      <ul>
-        {expences.length > 0 ? (
-          expences.map((expence) => {
+      {expences.length > 0 ? (
+        <ul>
+          {expences.map((expence) => {
             return (
               <li key={expence.id}>
                 {expence.source} {expence.amount} {expence.date}
               </li>
             );
-          })
-        ) : (
-          <p>No Expence sources</p>
-        )}
-      </ul>
+          })}
+        </ul>
+      ) : (
+        <p>No Expence sources</p>
+      )}
     </div>
   );
 };

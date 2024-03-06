@@ -1,4 +1,9 @@
-const TargetForSaving = () => {
+import React from "react";
+
+React;
+const TargetForSaving = (props: { savingAmount: number }) => {
+  console.log(props.savingAmount);
+
   return (
     <div>
       <form action="">
@@ -13,7 +18,7 @@ const TargetForSaving = () => {
         </div>
       </form>
 
-      <p className="target">Current Saving: 0</p>
+      <p className="target">Current Saving: {props.savingAmount}</p>
       <p className="target">Target: 0</p>
       <p>
         <progress max={5000} value={1000} />

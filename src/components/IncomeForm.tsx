@@ -1,4 +1,4 @@
-import { ChangeEvent, FormEvent, useState } from "react";
+import React, { ChangeEvent, FormEvent, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { toastSucess, toastError } from "../helper";
 
@@ -8,11 +8,22 @@ type IncomeType = {
   amount: number;
   date: string;
 };
-const IncomeForm = () => {
+
+type IncomeFormProps = {
+  onGeTotalIncomeAmount: (amount: number) => void;
+};
+const IncomeForm = (props: IncomeFormProps) => {
   const [source, setSource] = useState<string>("");
   const [amount, setAmount] = useState<number>(0);
   const [date, setDate] = useState<string>("");
   const [incomes, setIncomes] = useState<IncomeType[]>([]);
+
+  const totalAmount = incomes.reduce(
+    (total, currentValue) => total + currentValue.amount,
+    0
+  );
+  props.onGeTotalIncomeAmount(totalAmount);
+  // console.log(totalAmount);
 
   const handleSourceChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
@@ -96,20 +107,20 @@ const IncomeForm = () => {
         </div>
       </form>
 
-      <ul>
-        {/* {console.log(incomes)} */}
-        {incomes.length > 0 ? (
-          incomes.map((income) => {
+      {/* {console.log(incomes)} */}
+      {incomes.length > 0 ? (
+        <ul>
+          {incomes.map((income) => {
             return (
               <li key={income.id}>
                 {income.source} {income.amount} {income.date}
               </li>
             );
-          })
-        ) : (
-          <p>No Income sources</p>
-        )}
-      </ul>
+          })}
+        </ul>
+      ) : (
+        <p>No Income sources</p>
+      )}
     </div>
   );
 };
