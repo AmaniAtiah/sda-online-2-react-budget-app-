@@ -1,9 +1,9 @@
-import React, { ChangeEvent, FormEvent, useState } from "react";
+import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { toastSucess, toastError } from "../helper";
 
 type ExpenceType = {
-  id: string;
+  id?: string;
   source: string;
   amount: number;
   date: string;
@@ -14,48 +14,46 @@ type ExpenseFormProps = {
 };
 
 const ExpenceForm = (props: ExpenseFormProps) => {
-  const [source, setSource] = useState<string>("");
-  const [amount, setAmount] = useState<number>(0);
-  const [date, setDate] = useState<string>("");
+  const [expence, setExpence] = useState<ExpenceType>({
+    source: "",
+    amount: 0,
+    date: "",
+  });
   const [expences, setExpences] = useState<ExpenceType[]>([]);
 
   const totalAmount = expences.reduce(
     (total, currentValue) => total + currentValue.amount,
     0
   );
-  props.onGeTotalIExponseAmount(totalAmount);
 
-  const handleSourceChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const { value } = event.target;
-    setSource(value);
-  };
+  useEffect(() => {
+    props.onGeTotalIExponseAmount(totalAmount);
+  }, [expences, totalAmount, props]);
 
-  const handleAmountChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const { value } = event.target;
-    setAmount(Number(value));
-  };
-
-  const handleDateChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const { value } = event.target;
-    setDate(value);
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setExpence((prevExpence) => {
+      return { ...prevExpence, [event.target.name]: event.target.value };
+    });
   };
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
 
-    if (source && amount && date) {
-      const expence = {
-        id: uuidv4(),
-        source: source,
-        amount: amount,
-        date: date,
-      };
+    if (expence.source && expence.amount && expence.date) {
+      const newExpence = { id: uuidv4(), ...expence };
+
+      console.log(newExpence);
+
       //push the income
-      setExpences((prevExpences) => [...prevExpences, expence]);
+      setExpences((prevExpences) => [...prevExpences, newExpence]);
+
       toastSucess("Expence is added successfully");
-      setSource("");
-      setAmount(0);
-      setDate("");
+      setExpence({
+        //   id: "",
+        source: "",
+        amount: 0,
+        date: "",
+      });
     } else {
       toastError("Please fill all the fields");
     }
@@ -73,8 +71,8 @@ const ExpenceForm = (props: ExpenseFormProps) => {
             name="source"
             id="source"
             placeholder="Elecricity Bill"
-            value={source}
-            onChange={handleSourceChange}
+            value={expence.source}
+            onChange={handleChange}
             required
           />
         </div>
@@ -84,8 +82,8 @@ const ExpenceForm = (props: ExpenseFormProps) => {
             type="number"
             name="amount"
             id="amount"
-            value={amount}
-            onChange={handleAmountChange}
+            value={expence.amount}
+            onChange={handleChange}
             required
           />
         </div>
@@ -95,8 +93,8 @@ const ExpenceForm = (props: ExpenseFormProps) => {
             type="date"
             name="date"
             id="date"
-            value={date}
-            onChange={handleDateChange}
+            value={expence.date}
+            onChange={handleChange}
             required
           />
         </div>

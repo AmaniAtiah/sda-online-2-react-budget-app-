@@ -1,9 +1,9 @@
-import React, { ChangeEvent, FormEvent, useState } from "react";
+import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { toastSucess, toastError } from "../helper";
 
 type IncomeType = {
-  id: string;
+  id?: string;
   source: string;
   amount: number;
   date: string;
@@ -13,52 +13,47 @@ type IncomeFormProps = {
   onGeTotalIncomeAmount: (amount: number) => void;
 };
 const IncomeForm = (props: IncomeFormProps) => {
-  const [source, setSource] = useState<string>("");
-  const [amount, setAmount] = useState<number>(0);
-  const [date, setDate] = useState<string>("");
+  const [income, setIncome] = useState<IncomeType>({
+    source: "",
+    amount: 0,
+    date: "",
+  });
   const [incomes, setIncomes] = useState<IncomeType[]>([]);
 
   const totalAmount = incomes.reduce(
     (total, currentValue) => total + currentValue.amount,
     0
   );
-  props.onGeTotalIncomeAmount(totalAmount);
+
+  useEffect(() => {
+    props.onGeTotalIncomeAmount(totalAmount);
+  }, [incomes, totalAmount, props]);
   // console.log(totalAmount);
 
-  const handleSourceChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const { value } = event.target;
-    setSource(value);
-  };
-
-  const handleAmountChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const { value } = event.target;
-    setAmount(Number(value));
-  };
-
-  const handleDateChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const { value } = event.target;
-    setDate(value);
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setIncome((prevIncome) => {
+      return { ...prevIncome, [event.target.name]: event.target.value };
+    });
   };
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
 
-    if (source && amount && date) {
-      const income = {
-        id: uuidv4(),
-        source: source,
-        amount: amount,
-        date: date,
-      };
+    if (income.source && income.amount && income.date) {
+      const newIncome = { id: uuidv4(), ...income };
+
+      console.log(newIncome);
 
       //push the income
-      setIncomes((prevIncomes) => [...prevIncomes, income]);
+      setIncomes((prevIncomes) => [...prevIncomes, newIncome]);
 
       toastSucess("Income is added successfully");
-
-      setSource("");
-      setAmount(0);
-      setDate("");
+      setIncome({
+        //   id: "",
+        source: "",
+        amount: 0,
+        date: "",
+      });
     } else {
       toastError("Please fill all the fields");
     }
@@ -75,8 +70,8 @@ const IncomeForm = (props: IncomeFormProps) => {
             name="source"
             id="source"
             placeholder="Salary"
-            value={source}
-            onChange={handleSourceChange}
+            value={income.source}
+            onChange={handleChange}
             required
           />
         </div>
@@ -86,8 +81,8 @@ const IncomeForm = (props: IncomeFormProps) => {
             type="number"
             name="amount"
             id="amount"
-            value={amount}
-            onChange={handleAmountChange}
+            value={income.amount}
+            onChange={handleChange}
             required
           />
         </div>
@@ -97,8 +92,8 @@ const IncomeForm = (props: IncomeFormProps) => {
             type="date"
             name="date"
             id="date"
-            value={date}
-            onChange={handleDateChange}
+            value={income.date}
+            onChange={handleChange}
             required
           />
         </div>
