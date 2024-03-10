@@ -11,6 +11,7 @@ type ExpenceType = {
 
 type ExpenseFormProps = {
   onGeTotalIExponseAmount: (amount: number) => void;
+  totalIncomeAmount: number;
 };
 
 const ExpenceForm = (props: ExpenseFormProps) => {
@@ -22,7 +23,7 @@ const ExpenceForm = (props: ExpenseFormProps) => {
   const [expences, setExpences] = useState<ExpenceType[]>([]);
 
   const totalAmount = expences.reduce(
-    (total, currentValue) => total + currentValue.amount,
+    (total, currentValue) => total + Number(currentValue.amount),
     0
   );
 
@@ -36,18 +37,28 @@ const ExpenceForm = (props: ExpenseFormProps) => {
     });
   };
 
+  console.log("total amount expence: " + totalAmount);
+  console.log("total amount income" + props.totalIncomeAmount);
+
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
 
     if (expence.source && expence.amount && expence.date) {
-      const newExpence = { id: uuidv4(), ...expence };
+      if (totalAmount + expence.amount <= props.totalIncomeAmount) {
+        // If totalAmount is less than totalIncomeAmount, add the expense
+        const newExpense = { id: uuidv4(), ...expence };
 
-      console.log(newExpence);
+        console.log(newExpense);
 
-      //push the income
-      setExpences((prevExpences) => [...prevExpences, newExpence]);
+        // Push the expense
+        setExpences((prevExpenses) => [...prevExpenses, newExpense]);
 
-      toastSucess("Expence is added successfully");
+        toastSucess("Expense is added successfully");
+      } else {
+        // If totalAmount is equal to or greater than totalIncomeAmount, show an error message
+        toastError("Insufficient balance");
+      }
+
       setExpence({
         //   id: "",
         source: "",
@@ -59,6 +70,11 @@ const ExpenceForm = (props: ExpenseFormProps) => {
     }
   };
 
+  const deleteExpence = (id: string | undefined) => {
+    return setExpences((prevExpence) =>
+      prevExpence.filter((expence) => expence.id !== id)
+    );
+  };
   return (
     <div>
       <form onSubmit={handleSubmit}>
@@ -109,6 +125,9 @@ const ExpenceForm = (props: ExpenseFormProps) => {
             return (
               <li key={expence.id}>
                 {expence.source} {expence.amount} {expence.date}
+                <button type="button" onClick={() => deleteExpence(expence.id)}>
+                  Delete
+                </button>
               </li>
             );
           })}

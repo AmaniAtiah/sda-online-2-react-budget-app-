@@ -9,8 +9,6 @@ import { ToastContainer } from "react-toastify";
 
 import "react-toastify/dist/ReactToastify.css";
 
-// import Counter from "./components/Counter";
-
 function App() {
   const [savingAmount, setSavingAmount] = useState(0);
   const [totalIncomeAmount, setTotalIncomeAmount] = useState(0);
@@ -33,13 +31,14 @@ function App() {
     <>
       <ToastContainer />
       <div className="container ">
-        {/* <Counter /> */}
-
         <div className="column">
           <IncomeForm onGeTotalIncomeAmount={getTotalIncomeAmount} />
         </div>
         <div className="column">
-          <ExpenceForm onGeTotalIExponseAmount={getTotalExpenceAmount} />
+          <ExpenceForm
+            onGeTotalIExponseAmount={getTotalExpenceAmount}
+            totalIncomeAmount={totalIncomeAmount}
+          />
         </div>
         <div className="column">
           <TargetForSaving savingAmount={savingAmount} />

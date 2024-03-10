@@ -18,22 +18,34 @@ const IncomeForm = (props: IncomeFormProps) => {
     amount: 0,
     date: "",
   });
+
+  // const [isFormValid, setIsFormValid] = useState(false);
+  // const [sourceError, setSourceError] = useState("");
   const [incomes, setIncomes] = useState<IncomeType[]>([]);
 
-  const totalAmount = incomes.reduce(
-    (total, currentValue) => total + currentValue.amount,
-    0
-  );
+  const totalAmount = incomes.reduce((total, currentValue) => {
+    console.log("Current Value:", currentValue.amount);
+    return total + Number(currentValue.amount);
+  }, 0);
 
   useEffect(() => {
     props.onGeTotalIncomeAmount(totalAmount);
   }, [incomes, totalAmount, props]);
-  // console.log(totalAmount);
+
+  // useEffect(() => {
+  //   const isValidForm = Object.values(income).every((value) => value === "");
+  //   setIsFormValid(isValidForm);
+  // }, [income]);
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setIncome((prevIncome) => {
       return { ...prevIncome, [event.target.name]: event.target.value };
     });
+    // if (income.source.length <= 2) {
+    //   setSourceError("minimum length must be 2");
+    // } else {
+    //   setSourceError("");
+    // }
   };
 
   const handleSubmit = (event: FormEvent) => {
@@ -58,6 +70,13 @@ const IncomeForm = (props: IncomeFormProps) => {
       toastError("Please fill all the fields");
     }
   };
+
+  const deleteIncome = (id: string | undefined) => {
+    return setIncomes((prevIncomes) =>
+      prevIncomes.filter((income) => income.id !== id)
+    );
+  };
+
   return (
     <div>
       <form onSubmit={handleSubmit}>
@@ -74,6 +93,7 @@ const IncomeForm = (props: IncomeFormProps) => {
             onChange={handleChange}
             required
           />
+          {/* {sourceError && <p className="error">{sourceError}</p>} */}
         </div>
         <div className="form-field">
           <label htmlFor="amount">Amount of Income</label> <br />
@@ -109,6 +129,9 @@ const IncomeForm = (props: IncomeFormProps) => {
             return (
               <li key={income.id}>
                 {income.source} {income.amount} {income.date}
+                <button type="button" onClick={() => deleteIncome(income.id)}>
+                  Delete
+                </button>
               </li>
             );
           })}
