@@ -9,9 +9,8 @@ type TransferForSavingProps = {
 
 const TransferForSaving = (props: TransferForSavingProps) => {
   const [amount, setAmount] = useState(0);
-  let [balance, setBalance] = useState(0);
-
-  // const [balance, setBalance] = useState(0);
+  const [balance, setBalance] = useState(0);
+  const [totalSavings, setTotalSavings] = useState(0);
 
   const handleAmountChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
@@ -19,28 +18,27 @@ const TransferForSaving = (props: TransferForSavingProps) => {
     setAmount(Number(value));
   };
 
-  const calculateBalance = () => {
-    const calculatedBalance =
-      props.totalIncomeAmount - props.totalExpenceAmount;
-    setAmount((amount) => amount + calculatedBalance);
-
-    // if (calculatedBalance < 0) {
-    //   return props.totalIncomeAmount;
-    // }
-  };
-
   useEffect(() => {
     const calculatedBalance =
-      props.totalIncomeAmount - props.totalExpenceAmount - amount;
+      props.totalIncomeAmount - props.totalExpenceAmount - totalSavings;
     setBalance(calculatedBalance);
-    // setAmount((amount) => amount + calculatedBalance);
   }, [amount, props.totalIncomeAmount, props.totalExpenceAmount]);
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
 
-    props.onGetSavingAmount(amount);
-    setAmount(0);
+    const remainingBalance = balance - amount;
+    if (remainingBalance >= 0) {
+      setTotalSavings((prevTotal) => prevTotal + amount);
+
+      setAmount(0);
+
+      setBalance(remainingBalance);
+
+      props.onGetSavingAmount(totalSavings + amount);
+    } else {
+      console.log("Insufficient balance for the transfer");
+    }
   };
 
   return (
