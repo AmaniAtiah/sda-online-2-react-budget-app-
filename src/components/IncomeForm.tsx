@@ -19,8 +19,6 @@ const IncomeForm = (props: IncomeFormProps) => {
     date: "",
   });
 
-  // const [isFormValid, setIsFormValid] = useState(false);
-  // const [sourceError, setSourceError] = useState("");
   const [incomes, setIncomes] = useState<IncomeType[]>([]);
 
   const totalAmount = incomes.reduce((total, currentValue) => {
@@ -32,20 +30,10 @@ const IncomeForm = (props: IncomeFormProps) => {
     props.onGeTotalIncomeAmount(totalAmount);
   }, [incomes, totalAmount, props]);
 
-  // useEffect(() => {
-  //   const isValidForm = Object.values(income).every((value) => value === "");
-  //   setIsFormValid(isValidForm);
-  // }, [income]);
-
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setIncome((prevIncome) => {
       return { ...prevIncome, [event.target.name]: event.target.value };
     });
-    // if (income.source.length <= 2) {
-    //   setSourceError("minimum length must be 2");
-    // } else {
-    //   setSourceError("");
-    // }
   };
 
   const handleSubmit = (event: FormEvent) => {
