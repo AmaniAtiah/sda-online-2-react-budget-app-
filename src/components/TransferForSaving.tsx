@@ -1,5 +1,11 @@
 import { log } from "console";
-import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import React, {
+  ChangeEvent,
+  FormEvent,
+  memo,
+  useEffect,
+  useState,
+} from "react";
 
 type TransferForSavingProps = {
   onGetSavingAmount: (amount: number) => void;
@@ -65,4 +71,4 @@ const TransferForSaving = (props: TransferForSavingProps) => {
   );
 };
 
-export default TransferForSaving;
+export default memo(TransferForSaving);

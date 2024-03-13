@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 
 import { ToastContainer } from "react-toastify";
 
@@ -13,18 +13,18 @@ const Budget = () => {
   const [totalIncomeAmount, setTotalIncomeAmount] = useState(0);
   const [totalExpenceAmount, setTotalExpenceAmount] = useState(0);
 
-  const getSavingAmount = (amount: number) => {
+  const getSavingAmount = useCallback((amount: number) => {
     setSavingAmount(amount);
-  };
+  }, []);
 
-  const getTotalIncomeAmount = (amount: number) => {
+  const getTotalIncomeAmount = useCallback((amount: number) => {
     setTotalIncomeAmount(amount);
-  };
+  }, []);
   // console.log(totalIncomeAmount);
 
-  const getTotalExpenceAmount = (amount: number) => {
+  const getTotalExpenceAmount = useCallback((amount: number) => {
     setTotalExpenceAmount(amount);
-  };
+  }, []);
 
   return (
     <div>

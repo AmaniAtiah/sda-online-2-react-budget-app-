@@ -1,4 +1,10 @@
-import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import React, {
+  ChangeEvent,
+  FormEvent,
+  memo,
+  useEffect,
+  useState,
+} from "react";
 import { v4 as uuidv4 } from "uuid";
 import { toastSucess, toastError } from "../helper";
 
@@ -131,4 +137,4 @@ const IncomeForm = (props: IncomeFormProps) => {
   );
 };
 
-export default IncomeForm;
+export default memo(IncomeForm);
