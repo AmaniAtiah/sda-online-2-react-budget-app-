@@ -1,6 +1,6 @@
 import React, { ChangeEvent, FormEvent, useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
 
-React;
 const TargetForSaving = (props: { savingAmount: number }) => {
   console.log(props.savingAmount);
 
@@ -21,6 +21,8 @@ const TargetForSaving = (props: { savingAmount: number }) => {
   const calculateSavingPercentage = () => {
     if (target >= props.savingAmount) {
       return target !== 0 ? (props.savingAmount / target) * 100 : 0;
+    } else {
+      return 0;
     }
   };
 

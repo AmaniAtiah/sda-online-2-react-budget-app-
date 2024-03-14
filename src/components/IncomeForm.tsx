@@ -1,12 +1,7 @@
-import React, {
-  ChangeEvent,
-  FormEvent,
-  memo,
-  useEffect,
-  useState,
-} from "react";
+import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { toastSucess, toastError } from "../helper";
+import { SubmitHandler, useForm } from "react-hook-form";
 
 type IncomeType = {
   id?: string;
@@ -18,17 +13,23 @@ type IncomeType = {
 type IncomeFormProps = {
   onGeTotalIncomeAmount: (amount: number) => void;
 };
+
 const IncomeForm = (props: IncomeFormProps) => {
-  const [income, setIncome] = useState<IncomeType>({
-    source: "",
-    amount: 0,
-    date: "",
-  });
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<IncomeType>();
+  // const [income, setIncome] = useState<IncomeType>({
+  //   source: "",
+  //   amount: 0,
+  //   date: "",
+  // });
 
   const [incomes, setIncomes] = useState<IncomeType[]>([]);
 
   const totalAmount = incomes.reduce((total, currentValue) => {
-    console.log("Current Value:", currentValue.amount);
+    // console.log("Current Value:", currentValue.amount);
     return total + Number(currentValue.amount);
   }, 0);
 
@@ -36,30 +37,29 @@ const IncomeForm = (props: IncomeFormProps) => {
     props.onGeTotalIncomeAmount(totalAmount);
   }, [incomes, totalAmount, props]);
 
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setIncome((prevIncome) => {
-      return { ...prevIncome, [event.target.name]: event.target.value };
-    });
-  };
+  // const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+  //   setIncome((prevIncome) => {
+  //     return { ...prevIncome, [event.target.name]: event.target.value };
+  //   });
+  // };
 
-  const handleSubmit = (event: FormEvent) => {
-    event.preventDefault();
+  const IncomeSubmit: SubmitHandler<IncomeType> = (data) => {
+    // event.preventDefault();
 
-    if (income.source && income.amount && income.date) {
-      const newIncome = { id: uuidv4(), ...income };
+    if (data.amount < 0) {
+      toastError("Amount cannot be negative");
+      return;
+    }
+    if (data.source && data.amount && data.date) {
+      const newIncome = { id: uuidv4(), ...data };
 
-      console.log(newIncome);
+      // console.log(newIncome);
 
       //push the income
       setIncomes((prevIncomes) => [...prevIncomes, newIncome]);
 
       toastSucess("Income is added successfully");
-      setIncome({
-        //   id: "",
-        source: "",
-        amount: 0,
-        date: "",
-      });
+      console.log("Updated Incomes:", incomes);
     } else {
       toastError("Please fill all the fields");
     }
@@ -73,43 +73,43 @@ const IncomeForm = (props: IncomeFormProps) => {
 
   return (
     <div>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit(IncomeSubmit)}>
         <div className="form-field">
           <label htmlFor="source">Income Source </label>
           <br />
 
           <input
             type="text"
-            name="source"
             id="source"
             placeholder="Salary"
-            value={income.source}
-            onChange={handleChange}
-            required
+            {...register("source", {
+              required: "salary is required",
+            })}
           />
+          {errors.source && <span>{errors.source.message}</span>}
           {/* {sourceError && <p className="error">{sourceError}</p>} */}
         </div>
         <div className="form-field">
           <label htmlFor="amount">Amount of Income</label> <br />
           <input
             type="number"
-            name="amount"
             id="amount"
-            value={income.amount}
-            onChange={handleChange}
-            required
+            {...register("amount", {
+              required: "amount is required",
+            })}
           />
+          {errors.amount && <span>{errors.amount.message}</span>}
         </div>
         <div className="form-field">
           <label htmlFor="date">Date of Income</label> <br />
           <input
             type="date"
-            name="date"
             id="date"
-            value={income.date}
-            onChange={handleChange}
-            required
+            {...register("date", {
+              required: "date is required",
+            })}
           />
+          {errors.date && <span>{errors.date.message}</span>}
         </div>
         <div className="form-field">
           <button type="submit">Add Income</button>
@@ -137,4 +137,4 @@ const IncomeForm = (props: IncomeFormProps) => {
   );
 };
 
-export default memo(IncomeForm);
+export default IncomeForm;

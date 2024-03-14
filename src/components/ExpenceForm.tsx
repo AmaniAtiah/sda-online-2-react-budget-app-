@@ -7,6 +7,7 @@ import React, {
 } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { toastSucess, toastError } from "../helper";
+import { SubmitHandler, useForm } from "react-hook-form";
 
 type ExpenceType = {
   id?: string;
@@ -21,11 +22,11 @@ type ExpenseFormProps = {
 };
 
 const ExpenceForm = (props: ExpenseFormProps) => {
-  const [expence, setExpence] = useState<ExpenceType>({
-    source: "",
-    amount: 0,
-    date: "",
-  });
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<ExpenceType>();
   const [expences, setExpences] = useState<ExpenceType[]>([]);
 
   const totalAmount = expences.reduce(
@@ -37,24 +38,23 @@ const ExpenceForm = (props: ExpenseFormProps) => {
     props.onGeTotalIExponseAmount(totalAmount);
   }, [expences, totalAmount, props]);
 
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setExpence((prevExpence) => {
-      return { ...prevExpence, [event.target.name]: event.target.value };
-    });
-  };
+  // console.log("total amount expence: " + totalAmount);
+  // console.log("total amount income" + props.totalIncomeAmount);
 
-  console.log("total amount expence: " + totalAmount);
-  console.log("total amount income" + props.totalIncomeAmount);
+  const expenceSubmit: SubmitHandler<ExpenceType> = (data) => {
+    // event.preventDefault();
 
-  const handleSubmit = (event: FormEvent) => {
-    event.preventDefault();
+    if (data.amount < 0) {
+      toastError("Expence cannot be negative");
+      return;
+    }
 
-    if (expence.source && expence.amount && expence.date) {
-      if (totalAmount + expence.amount <= props.totalIncomeAmount) {
+    if (data.source && data.amount && data.date) {
+      if (totalAmount + data.amount <= props.totalIncomeAmount) {
         // If totalAmount is less than totalIncomeAmount, add the expense
-        const newExpense = { id: uuidv4(), ...expence };
+        const newExpense = { id: uuidv4(), ...data };
 
-        console.log(newExpense);
+        // console.log(newExpense);
 
         // Push the expense
         setExpences((prevExpenses) => [...prevExpenses, newExpense]);
@@ -64,13 +64,6 @@ const ExpenceForm = (props: ExpenseFormProps) => {
         // If totalAmount is equal to or greater than totalIncomeAmount, show an error message
         toastError("Insufficient balance");
       }
-
-      setExpence({
-        //   id: "",
-        source: "",
-        amount: 0,
-        date: "",
-      });
     } else {
       toastError("Please fill all the fields");
     }
@@ -83,42 +76,42 @@ const ExpenceForm = (props: ExpenseFormProps) => {
   };
   return (
     <div>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit(expenceSubmit)}>
         <div className="form-field">
           <label htmlFor="source">Expence Source </label>
           <br />
 
           <input
             type="text"
-            name="source"
             id="source"
             placeholder="Elecricity Bill"
-            value={expence.source}
-            onChange={handleChange}
-            required
+            {...register("source", {
+              required: "Elecricity Bill is required",
+            })}
           />
+          {errors.source && <span>{errors.source.message}</span>}
         </div>
         <div className="form-field">
           <label htmlFor="amount">Amount of Expence</label> <br />
           <input
             type="number"
-            name="amount"
             id="amount"
-            value={expence.amount}
-            onChange={handleChange}
-            required
+            {...register("amount", {
+              required: "Amount  is required",
+            })}
           />
+          {errors.amount && <span>{errors.amount.message}</span>}
         </div>
         <div className="form-field">
           <label htmlFor="date">Date of Expence</label> <br />
           <input
             type="date"
-            name="date"
             id="date"
-            value={expence.date}
-            onChange={handleChange}
-            required
+            {...register("date", {
+              required: "date  is required",
+            })}
           />
+          {errors.date && <span>{errors.date.message}</span>}
         </div>
         <div className="form-field">
           <button type="submit">Add Expence</button>
