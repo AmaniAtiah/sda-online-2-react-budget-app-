@@ -57,9 +57,9 @@ const TransferForSaving = (props: TransferForSavingProps) => {
                 },
               })}
             />
-            {errors.amount && (
-              <span className="error">{errors.amount.message}</span>
-            )}
+            {/* {errors.amount && ( */}
+            {/* // <span className="error">{errors.amount.message}</span> */}
+            {/* )} */}
 
             <br />
             <button className="tranfer_btn" type="submit">
