@@ -1,5 +1,5 @@
 import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { FieldError, useForm } from "react-hook-form";
 
 type TransferForSavingProps = {
   onGetSavingAmount: (amount: number) => void;
@@ -57,11 +57,14 @@ const TransferForSaving = (props: TransferForSavingProps) => {
                 },
               })}
             />
-            {/* {errors.amount && ( */}
-            {/* // <span className="error">{errors.amount.message}</span> */}
-            {/* )} */}
 
-            <br />
+            {errors.amount && (
+              <p className="error">
+                {typeof errors.amount === "string"
+                  ? (errors.amount as string)
+                  : (errors.amount as FieldError).message}
+              </p>
+            )}
             <button className="tranfer_btn" type="submit">
               Transfer
             </button>
