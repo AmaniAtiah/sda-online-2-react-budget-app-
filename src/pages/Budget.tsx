@@ -20,7 +20,6 @@ const Budget = () => {
   const getTotalIncomeAmount = useCallback((amount: number) => {
     setTotalIncomeAmount(amount);
   }, []);
-  // console.log(totalIncomeAmount);
 
   const getTotalExpenceAmount = useCallback((amount: number) => {
     setTotalExpenceAmount(amount);
@@ -29,27 +28,21 @@ const Budget = () => {
   return (
     <div>
       <ToastContainer />
-      <div className="container ">
-        <div className="column">
-          <IncomeForm onGeTotalIncomeAmount={getTotalIncomeAmount} />
-        </div>
-        <div className="column">
-          <ExpenceForm
-            onGeTotalIExponseAmount={getTotalExpenceAmount}
-            totalIncomeAmount={totalIncomeAmount}
-          />
-        </div>
-        <div className="column">
-          <TargetForSaving savingAmount={savingAmount} />
-        </div>
-        <div className="container-under">
-          <TransferForSaving
-            onGetSavingAmount={getSavingAmount}
-            totalIncomeAmount={totalIncomeAmount}
-            totalExpenceAmount={totalExpenceAmount}
-          />
-        </div>
-      </div>
+
+      <IncomeForm onGeTotalIncomeAmount={getTotalIncomeAmount} />
+
+      <ExpenceForm
+        onGeTotalIExponseAmount={getTotalExpenceAmount}
+        totalIncomeAmount={totalIncomeAmount}
+      />
+
+      <TargetForSaving savingAmount={savingAmount} />
+
+      <TransferForSaving
+        onGetSavingAmount={getSavingAmount}
+        totalIncomeAmount={totalIncomeAmount}
+        totalExpenceAmount={totalExpenceAmount}
+      />
     </div>
   );
 };

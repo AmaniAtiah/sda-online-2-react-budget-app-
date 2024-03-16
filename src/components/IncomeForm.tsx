@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { toastSucess, toastError } from "../helper";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -19,17 +19,12 @@ const IncomeForm = (props: IncomeFormProps) => {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<IncomeType>();
-  // const [income, setIncome] = useState<IncomeType>({
-  //   source: "",
-  //   amount: 0,
-  //   date: "",
-  // });
 
   const [incomes, setIncomes] = useState<IncomeType[]>([]);
 
   const totalAmount = incomes.reduce((total, currentValue) => {
-    // console.log("Current Value:", currentValue.amount);
     return total + Number(currentValue.amount);
   }, 0);
 
@@ -37,28 +32,14 @@ const IncomeForm = (props: IncomeFormProps) => {
     props.onGeTotalIncomeAmount(totalAmount);
   }, [incomes, totalAmount, props]);
 
-  // const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-  //   setIncome((prevIncome) => {
-  //     return { ...prevIncome, [event.target.name]: event.target.value };
-  //   });
-  // };
-
   const IncomeSubmit: SubmitHandler<IncomeType> = (data) => {
-    // event.preventDefault();
-
-    if (data.amount < 0) {
-      toastError("Amount cannot be negative");
-      return;
-    }
     if (data.source && data.amount && data.date) {
       const newIncome = { id: uuidv4(), ...data };
 
-      // console.log(newIncome);
-
-      //push the income
       setIncomes((prevIncomes) => [...prevIncomes, newIncome]);
 
       toastSucess("Income is added successfully");
+      reset();
       console.log("Updated Incomes:", incomes);
     } else {
       toastError("Please fill all the fields");
@@ -72,67 +53,88 @@ const IncomeForm = (props: IncomeFormProps) => {
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit(IncomeSubmit)}>
-        <div className="form-field">
-          <label htmlFor="source">Income Source </label>
-          <br />
+    <div className="income_container">
+      <div className="form_container">
+        <form onSubmit={handleSubmit(IncomeSubmit)}>
+          <div className="form-field">
+            <label htmlFor="source">Income Source </label>
 
-          <input
-            type="text"
-            id="source"
-            placeholder="Salary"
-            {...register("source", {
-              required: "salary is required",
-            })}
-          />
-          {errors.source && <span>{errors.source.message}</span>}
-          {/* {sourceError && <p className="error">{sourceError}</p>} */}
-        </div>
-        <div className="form-field">
-          <label htmlFor="amount">Amount of Income</label> <br />
-          <input
-            type="number"
-            id="amount"
-            {...register("amount", {
-              required: "amount is required",
-            })}
-          />
-          {errors.amount && <span>{errors.amount.message}</span>}
-        </div>
-        <div className="form-field">
-          <label htmlFor="date">Date of Income</label> <br />
-          <input
-            type="date"
-            id="date"
-            {...register("date", {
-              required: "date is required",
-            })}
-          />
-          {errors.date && <span>{errors.date.message}</span>}
-        </div>
-        <div className="form-field">
-          <button type="submit">Add Income</button>
-        </div>
-      </form>
+            <input
+              type="text"
+              id="source"
+              placeholder="Salary"
+              {...register("source", {
+                required: "salary is required",
+              })}
+            />
+            {errors.source && (
+              <span className="error">{errors.source.message}</span>
+            )}
+          </div>
+          <div className="form-field">
+            <label htmlFor="amount">Amount of Income</label>
+            <input
+              type="number"
+              id="amount"
+              {...register("amount", {
+                required: "amount is required",
+                min: {
+                  value: 0,
+                  message: "Amount cannot be negative",
+                },
+              })}
+            />
+            {errors.amount && (
+              <span className="error">{errors.amount.message}</span>
+            )}
+          </div>
+          <div className="form-field">
+            <label htmlFor="date">Date of Income</label>
+            <input
+              type="date"
+              id="date"
+              {...register("date", {
+                required: "date is required",
+              })}
+            />
+            {errors.date && (
+              <span className="error">{errors.date.message}</span>
+            )}
+          </div>
+          <div className="form-field">
+            <button className="income_btn" type="submit">
+              Add Income
+            </button>
+          </div>
+        </form>
+      </div>
 
-      {/* {console.log(incomes)} */}
-      {incomes.length > 0 ? (
-        <ul>
-          {incomes.map((income) => {
-            return (
-              <li key={income.id}>
-                {income.source} {income.amount} {income.date}
-                <button type="button" onClick={() => deleteIncome(income.id)}>
-                  Delete
-                </button>
-              </li>
-            );
-          })}
-        </ul>
-      ) : (
-        <p>No Income sources</p>
-      )}
+      <div className="income_list">
+        <p>Income List</p>
+        {incomes.length > 0 ? (
+          <ul>
+            {incomes.map((income) => {
+              return (
+                <li key={income.id}>
+                  <p> {income.source}</p>
+                  <p> {income.amount}</p>
+                  <p> {income.date}</p>
+
+                  <button
+                    className="btn"
+                    type="button"
+                    onClick={() => deleteIncome(income.id)}
+                  >
+                    Delete
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        ) : (
+          <p>No Income sources</p>
+        )}
+      </div>
     </div>
   );
 };

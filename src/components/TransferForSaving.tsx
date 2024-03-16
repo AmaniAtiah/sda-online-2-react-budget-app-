@@ -1,11 +1,5 @@
-import { log } from "console";
-import React, {
-  ChangeEvent,
-  FormEvent,
-  memo,
-  useEffect,
-  useState,
-} from "react";
+import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 
 type TransferForSavingProps = {
   onGetSavingAmount: (amount: number) => void;
@@ -14,61 +8,68 @@ type TransferForSavingProps = {
 };
 
 const TransferForSaving = (props: TransferForSavingProps) => {
-  const [amount, setAmount] = useState(0);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm();
   const [balance, setBalance] = useState(0);
   const [totalSavings, setTotalSavings] = useState(0);
-
-  const handleAmountChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const { value } = event.target;
-
-    setAmount(Number(value));
-  };
 
   useEffect(() => {
     const calculatedBalance =
       props.totalIncomeAmount - props.totalExpenceAmount - totalSavings;
     setBalance(calculatedBalance);
-  }, [amount, props.totalIncomeAmount, props.totalExpenceAmount]);
+  }, [props.totalIncomeAmount, props.totalExpenceAmount, totalSavings]);
 
-  const handleSubmit = (event: FormEvent) => {
-    event.preventDefault();
+  const onSubmit = (data: any) => {
+    const amount = Number(data.amount);
 
     const remainingBalance = balance - amount;
     if (remainingBalance >= 0) {
       setTotalSavings((prevTotal) => prevTotal + amount);
-
-      setAmount(0);
-
       setBalance(remainingBalance);
-
       props.onGetSavingAmount(totalSavings + amount);
+      reset();
     } else {
       console.log("Insufficient balance for the transfer");
     }
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <div className="form-field">
-          <p>Current Balance: {balance}</p>
-        </div>
-        <div className="form-field">
-          <p>Tranfer For saving Account</p>
-          <input
-            type="text"
-            name="amount"
-            id="amount"
-            value={amount}
-            onChange={handleAmountChange}
-            required
-          />
+    <div className="tranfer_container">
+      <div className="form_tranfer">
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="form-field">
+            <p>Current Balance: {balance}</p>
+          </div>
+          <div className="form-field">
+            <p>Transfer For saving Account</p>
+            <input
+              type="number"
+              id="amount"
+              {...register("amount", {
+                required: "amount is required",
+                min: {
+                  value: 0,
+                  message: "Amount cannot be negative",
+                },
+              })}
+            />
+            {errors.amount && (
+              <span className="error">{errors.amount.message}</span>
+            )}
 
-          <button type="submit">Transfer</button>
-        </div>
-      </form>
+            <br />
+            <button className="tranfer_btn" type="submit">
+              Transfer
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
 
-export default memo(TransferForSaving);
+export default TransferForSaving;

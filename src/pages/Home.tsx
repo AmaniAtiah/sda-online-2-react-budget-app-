@@ -1,11 +1,18 @@
+import { useNavigate } from "react-router-dom";
+
 const Home = () => {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate("/budget-app");
+  };
   return (
-    <p>
-      Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempora sequi
-      dicta numquam neque, cumque fugit pariatur voluptatem excepturi officia.
-      Ullam atque pariatur, minus obcaecati consequuntur dolorem sapiente ex?
-      Temporibus, voluptatem!
-    </p>
+    <div className="budget_container">
+      <p>Budget App</p>
+      <button type="button" onClick={handleClick} className="budget_btn">
+        Budget
+      </button>
+    </div>
   );
 };
 
