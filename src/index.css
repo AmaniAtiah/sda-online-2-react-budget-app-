@@ -100,8 +100,8 @@ body {
   margin-bottom: 10px;
 }
 
-.income_list .btn,
-.expence_list .btn {
+.income_list .delete_btn,
+.expence_list .delete_btn {
   height: 2.5rem;
   border: none;
   border-radius: 10px;

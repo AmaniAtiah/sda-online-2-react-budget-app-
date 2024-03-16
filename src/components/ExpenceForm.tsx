@@ -69,7 +69,7 @@ const ExpenceForm = (props: ExpenseFormProps) => {
 
             <input
               type="text"
-              id="source"
+              id="expence_source"
               placeholder="Elecricity Bill"
               {...register("source", {
                 required: "Elecricity Bill is required",
@@ -83,7 +83,7 @@ const ExpenceForm = (props: ExpenseFormProps) => {
             <label htmlFor="amount">Amount of Expence</label> <br />
             <input
               type="number"
-              id="amount"
+              id="expence_amount"
               {...register("amount", {
                 required: "Amount  is required",
                 min: {
@@ -100,7 +100,7 @@ const ExpenceForm = (props: ExpenseFormProps) => {
             <label htmlFor="date">Date of Expence</label> <br />
             <input
               type="date"
-              id="date"
+              id="expence_date"
               {...register("date", {
                 required: "date  is required",
               })}
@@ -129,7 +129,7 @@ const ExpenceForm = (props: ExpenseFormProps) => {
                   <p> {expence.date}</p>
 
                   <button
-                    className="btn"
+                    className="delete_btn"
                     type="button"
                     onClick={() => deleteExpence(expence.id)}
                   >

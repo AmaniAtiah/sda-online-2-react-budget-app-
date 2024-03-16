@@ -61,7 +61,7 @@ const IncomeForm = (props: IncomeFormProps) => {
 
             <input
               type="text"
-              id="source"
+              id="income_source"
               placeholder="Salary"
               {...register("source", {
                 required: "salary is required",
@@ -75,7 +75,7 @@ const IncomeForm = (props: IncomeFormProps) => {
             <label htmlFor="amount">Amount of Income</label>
             <input
               type="number"
-              id="amount"
+              id="incpme_amount"
               {...register("amount", {
                 required: "amount is required",
                 min: {
@@ -92,7 +92,7 @@ const IncomeForm = (props: IncomeFormProps) => {
             <label htmlFor="date">Date of Income</label>
             <input
               type="date"
-              id="date"
+              id="income_date"
               {...register("date", {
                 required: "date is required",
               })}
@@ -121,7 +121,7 @@ const IncomeForm = (props: IncomeFormProps) => {
                   <p> {income.date}</p>
 
                   <button
-                    className="btn"
+                    className="delete_btn"
                     type="button"
                     onClick={() => deleteIncome(income.id)}
                   >
